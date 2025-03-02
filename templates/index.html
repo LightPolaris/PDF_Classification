@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统介绍</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+        nav ul li a:hover {
+            background-color: #575757;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 50px;
+        }
+        table {
+            width: 80%;
+            margin: 50px auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+        }
+        table th {
+            background-color: #333;
+            color: #fff;
+        }
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        table tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('scanprecheck') }}">扫描审查</a></li>
+            <li><a href="{{ url_for('preclassifyandcheck') }}">初步分类与分类审查</a></li>
+        </ul>
+    </nav>
+    <h1>基于PaddleOCR离线模型的文书分类系统需求分析</h1>
+
+    <h2>功能模块介绍</h1>
+    <table border="1">
+        <tr>
+            <th>功能模块</th>
+            <th>主要功能点</th>
+            <th>功能描述</th>
+        </tr>
+        <tr>
+            <td rowspan="2">扫描审查模块</td>
+            <td>快速浏览</td>
+            <td>快速扫描审查，文书自动回正、显示页码</td>
+        </tr>
+        <tr>
+            <td>快速浏览</td>
+            <td>上一页、下一页、跳转指定页面等按键，可以绑定键盘快捷键</td>
+        </tr>
+        <tr>
+            <td rowspan="4">初步分类与分类审查模块</td>
+            <td>初步程序分类</td>
+            <td>通过离线OCR模型对文档内容进行初步分类</td>
+        </tr>
+        <tr>
+            <td>快速手动分类</td>
+            <td>对分类失败的文书页面进行快速分类</td>
+        </tr>
+        <tr>
+            <td>分类审查</td>
+            <td>对分类完毕后的页面进行分类审查</td>
+        </tr>
+        <tr>
+            <td>PDF生成</td>
+            <td>生成各部门的分类后的PDF</td>
+        </tr>
+    </table>
+
+    <h2>分类依据</h1>
+
+</body>
+</html>

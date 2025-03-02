@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扫描审查</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 1px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        h2 {
+            color: #333;
+            margin-left: 2px;
+        }
+        .container {
+            padding: 2px;
+        }
+        .image-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .image-container img {
+            width: 50%;
+            margin-right: 5px;
+        }
+        .image-container button {
+            margin-right: 10px;
+        }
+        form {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        form input[type="number"] {
+            margin-right: 5px;
+        }
+        form button {
+            margin-right: 5px;
+        }
+        .message {
+            margin-left: 10px;
+        }
+        .message p {
+            margin: 0;
+        }
+        .message p.green {
+            color: green;
+        }
+        .message p.red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('scanprecheck') }}">扫描审查</a></li>
+            <li><a href="{{ url_for('preclassifyandcheck') }}">初步分类与分类审查</a></li>
+            <li>| 键盘快捷键说明：上一页：← 下一页：→ 旋转：↑</li>
+            <li>扫描审阅完后请点击扫描审查完毕 |</li>
+        </ul>
+    </nav>
+    <div class="container">
+        {% if pdf_name %}
+            <h3>|扫描审查 | {{ pdf_name }} | 当前页数: {{ current_page+1 }} | 总页数: {{ total_pages }} |</h2>
+            <div class="image-container">
+                <img id="scanImage" src="\static\images\{{ pdf_name }}\page_{{ current_page }}.png" alt="扫描图像">
+                <button type="button" onclick="rotateImage()" id="rotate">旋转图片180度</button>
+                <form action="{{ url_for('navigate') }}" method="post">
+                    <input type="hidden" name="current_page" value="{{ current_page }}">
+                    <input type="hidden" name="total_pages" value="{{ total_pages }}">
+                    <button type="submit" name="action" value="prev" id="prevBtn">上一页</button>
+                    <button type="submit" name="action" value="next" id="nextBtn">下一页</button>
+                    <label for="target_page">跳转到:</label>
+                    <input type="number" id="target_page" name="target_page" min="1" max="{{ total_pages }}">
+                    <button type="submit" name="action" value="goto">跳转</button>
+                </form>
+                <form action="{{ url_for('finish_scan') }}" method="post">
+                    <button type="submit" name="action" value="finish">扫描审查完毕</button>
+                </form>
+            </div>
+
+            <div class="message">
+                {% if check %}
+                    <p class="green">{{ check }}</p>
+                {% endif %}
+
+                {% if chekcerror %}
+                    <p class="red">{{ chekcerror }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        <br>
+        <form action="{{ url_for('quickscan') }}" method="post" enctype="multipart/form-data">
+            <label for="file">选择文件:</label>
+            <input type="file" id="file" name="file">
+            <button type="submit">读取</button>
+            <div class="message">
+                {% if succ %}
+                    <p class="green">{{ succ }}</p>
+                {% endif %}
+                {% if error %}
+                    <p class="red">{{ error }}</p>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function rotateImage() {
+            const img = document.getElementById('scanImage');
+            const currentRotation = img.style.transform || 'rotate(0deg)';
+            const newRotation = `rotate(${(parseInt(currentRotation.replace('rotate(', '').replace('deg)', '')) + 180) % 360}deg)`;
+            img.style.transform = newRotation;
+        }
+        document.addEventListener('keydown', function(e) {
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                return;
+            }
+            if (e.key === 'ArrowLeft') {
+                document.getElementById('prevBtn').click();
+            } else if (e.key === 'ArrowRight') {
+                document.getElementById('nextBtn').click();
+            } else if (e.key === 'ArrowUp') {
+                document.getElementById('rotate').click();
+            }
+        });
+    </script>
+</body>
+</html>

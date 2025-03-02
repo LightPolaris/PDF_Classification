@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主页</title>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href=" {{ url_for('scanprecheck') }} ">扫描审查</a></li>
+            <li><a href=" {{ url_for('preclassifyandcheck') }} ">初步分类与分类审查</a></li>
+        </ul>
+    </nav>
+
+
+    <h1> 程序初分类完成所有文书的分类，请返回上一页进行各部门文书的审阅 </h1>
+</body>
+</html>

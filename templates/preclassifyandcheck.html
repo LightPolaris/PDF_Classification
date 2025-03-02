@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初步分类与分类审查</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        p {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            text-align: center;
+        }
+        ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+        ul li a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('scanprecheck') }}">扫描审查</a></li>
+            <li><a href="{{ url_for('preclassifyandcheck') }}">初步分类与分类审查</a></li>
+        </ul>     
+    </nav>
+
+    <h1>初步分类与分类审查</h1>
+    <p style="color: blue;">{{ pdf_name }} 已经完成扫描审查</p>
+    <form action="{{ url_for('preclassify') }}" method="post">
+        <input type="hidden" name="action" value="classify"> 
+        <button type="submit">开始程序初分类</button>
+    </form>
+    {% if classify %}
+        <p style="color: green;">{{ classify }}</p>
+
+        <h2>请点击下面的按钮进行分类审查</h2>
+        <ul>
+            <li><a href="{{ url_for('progresscheckfail') }}">未分类</a></li>
+            <li><a href="{{ url_for('psbcheck') }}">苹果</a></li>
+            <li><a href="{{ url_for('nsacheck') }}">香蕉</a></li>
+            <li><a href="{{ url_for('ccdicheck') }}">橘子</a></li>
+            <li><a href="{{ url_for('othercheck') }}">其他</a></li>            
+        </ul>
+        <form action="{{ url_for('preclassify') }}" method="post">
+            <button type="submit" name="action" value="genpdf" id="nextBtn">生成各部门pdf</button>
+        </form>
+    {% endif %}
+
+    {% if genpdf %}
+        <p style="color: green;">{{ genpdf }}</p>
+    {% endif %}
+    {% if genpdferror %}
+        <p style="color: red;">{{ genpdferror }}</p>
+    {% endif %}
+
+    <p style="text-align: center; color: #333; margin-top: 20px;">PDF 将会生成到 <code>\uploads\【对应pdf名称】\result\【对应类别】.pdf</code> </p>
+
+</body>
+</html>

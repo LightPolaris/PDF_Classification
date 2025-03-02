@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初步分类与分类审查</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 1px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 5px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        nav ul li a:hover {
+            background-color: #575757;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            margin: 0px 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 1px;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .message {
+            text-align: center;
+            margin: 0px 0;
+        }
+        .message p {
+            margin: 0;
+        }
+        .image-container {
+            text-align: center;
+            margin: 1px 0;
+        }
+        .image-container img {
+            width: 59%;
+            transition: transform 0.3s ease;
+        }
+        form {
+            text-align: center;
+            margin: 5px 0;
+        }
+        form button, form input[type="number"] {
+            margin: 1px;
+            padding: 5px 10px;
+            font-size: 8px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0;
+            text-align: center;
+        }
+        ul li {
+            display: inline;
+            margin: 0 5px;
+        }
+        ul li a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        ul li a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('preclassifyandcheck') }}">初步分类与分类审查</a></li>
+            <li>| 键盘快捷键说明：上一页：← 下一页：→ 旋转：↑ |</li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        {% if pdf_name %}
+            <ul>
+                <li><a href="{{ url_for('progresscheckfail') }}">未分类</a></li>
+                <li><a href="{{ url_for('psbcheck') }}">苹果</a></li>
+                <li><a href="{{ url_for('nsacheck') }}">香蕉</a></li>
+                <li><a href="{{ url_for('ccdicheck') }}">橘子</a></li>
+                <li><a href="{{ url_for('othercheck') }}">其他</a></li>            
+            </ul>
+            <h2>| {{ pdf_name }} | 当前页数: {{ current_page+1 }} | 总页数: {{ total_pages }}  |  类别“{{ curr_class }}” |</h2>
+
+            <div class="image-container">
+                <img id="scanImage" src="\static\images\{{ pdf_name }}\page_{{ path2num[current_page] }}.png" alt="扫描图像">
+            </div>
+
+            <div class="message">
+                {% if unclassifiy %}
+                    <p style="color: red;">{{ unclassifiy }}</p>
+                {% endif %}
+    
+                {% if succ %}
+                    <p style="color: green;">{{ succ }}</p>
+                {% endif %}
+            </div>
+            {% if curr_class=="未分类" %}
+                <form action="{{ url_for('progresscheckfail') }}" method="post">
+                    <input type="hidden" name="current_page" value="{{ current_page }}">
+                    <input type="hidden" name="total_pages" value="{{ total_pages }}">
+                    <button type="submit" name="action" value="prev" id="prevBtn">上一页</button>
+                    <button type="submit" name="action" value="next" id="nextBtn">下一页</button>
+                    <button type="button" onclick="rotateImage()" id="rotate">旋转图片180度</button>
+                    <label for="target_page">跳转到:</label>
+                    <input type="number" id="target_page" name="target_page" min="1" max="{{ total_pages }}">
+                    <button type="submit" name="action" value="goto">跳转</button>
+                    <button type="submit" name="action" value="psb" id="">苹果</button>
+                    <button type="submit" name="action" value="nsa" id="">香蕉</button>
+                    <button type="submit" name="action" value="ccdi" id="">橘子</button>
+                    <button type="submit" name="action" value="other" id="">其他</button>
+                    <button type="submit" name="action" value="blank" id="">空白页</button>
+                </form>
+            {% endif %}
+
+            {% if curr_class=="苹果" %}
+                <form action="{{ url_for('psbcheck') }}" method="post">
+                    <input type="hidden" name="current_page" value="{{ current_page }}">
+                    <input type="hidden" name="total_pages" value="{{ total_pages }}">
+                    <button type="submit" name="action" value="prev" id="prevBtn">上一页</button>
+                    <button type="submit" name="action" value="next" id="nextBtn">下一页</button>
+                    <button type="button" onclick="rotateImage()" id="rotate">旋转图片180度</button>
+                    <label for="target_page">跳转到:</label>
+                    <input type="number" id="target_page" name="target_page" min="1" max="{{ total_pages }}">
+                    <button type="submit" name="action" value="goto">跳转</button>
+                    <button type="submit" name="action" value="psb" id="">苹果</button>
+                    <button type="submit" name="action" value="nsa" id="">香蕉</button>
+                    <button type="submit" name="action" value="ccdi" id="">橘子</button>
+                    <button type="submit" name="action" value="other" id="">其他</button>
+                    <button type="submit" name="action" value="blank" id="">空白页</button>
+                </form>
+            {% endif %}
+
+            {% if curr_class=="香蕉" %}
+                <form action="{{ url_for('nsacheck') }}" method="post">
+                    <input type="hidden" name="current_page" value="{{ current_page }}">
+                    <input type="hidden" name="total_pages" value="{{ total_pages }}">
+                    <button type="submit" name="action" value="prev" id="prevBtn">上一页</button>
+                    <button type="submit" name="action" value="next" id="nextBtn">下一页</button>
+                    <button type="button" onclick="rotateImage()" id="rotate">旋转图片180度</button>
+                    <label for="target_page">跳转到:</label>
+                    <input type="number" id="target_page" name="target_page" min="1" max="{{ total_pages }}">
+                    <button type="submit" name="action" value="goto">跳转</button>
+                    <button type="submit" name="action" value="psb" id="">苹果</button>
+                    <button type="submit" name="action" value="nsa" id="">香蕉</button>
+                    <button type="submit" name="action" value="ccdi" id="">橘子</button>
+                    <button type="submit" name="action" value="other" id="">其他</button>
+                    <button type="submit" name="action" value="blank" id="">空白页</button>
+                </form>
+            {% endif %}
+
+            {% if curr_class=="橘子" %}
+                <form action="{{ url_for('ccdicheck') }}" method="post">
+                    <input type="hidden" name="current_page" value="{{ current_page }}">
+                    <input type="hidden" name="total_pages" value="{{ total_pages }}">
+                    <button type="submit" name="action" value="prev" id="prevBtn">上一页</button>
+                    <button type="submit" name="action" value="next" id="nextBtn">下一页</button>
+                    <button type="button" onclick="rotateImage()" id="rotate">旋转图片180度</button>
+                    <label for="target_page">跳转到:</label>
+                    <input type="number" id="target_page" name="target_page" min="1" max="{{ total_pages }}">
+                    <button type="submit" name="action" value="goto">跳转</button>
+                    <button type="submit" name="action" value="psb" id="">苹果</button>
+                    <button type="submit" name="action" value="nsa" id="">香蕉</button>
+                    <button type="submit" name="action" value="ccdi" id="">橘子</button>
+                    <button type="submit" name="action" value="other" id="">其他</button>
+                    <button type="submit" name="action" value="blank" id="">空白页</button>
+                </form>
+            {% endif %}
+
+            {% if curr_class=="其他" %}
+                <form action="{{ url_for('othercheck') }}" method="post">
+                    <input type="hidden" name="current_page" value="{{ current_page }}">
+                    <input type="hidden" name="total_pages" value="{{ total_pages }}">
+                    <button type="submit" name="action" value="prev" id="prevBtn">上一页</button>
+                    <button type="submit" name="action" value="next" id="nextBtn">下一页</button>
+                    <button type="button" onclick="rotateImage()" id="rotate">旋转图片180度</button>
+                    <label for="target_page">跳转到:</label>
+                    <input type="number" id="target_page" name="target_page" min="1" max="{{ total_pages }}">
+                    <button type="submit" name="action" value="goto">跳转</button>
+                    <button type="submit" name="action" value="psb" id="">苹果</button>
+                    <button type="submit" name="action" value="nsa" id="">香蕉</button>
+                    <button type="submit" name="action" value="ccdi" id="">橘子</button>
+                    <button type="submit" name="action" value="other" id="">其他</button>
+                    <button type="submit" name="action" value="blank" id="">空白页</button>
+
+            {% endif %}
+
+            <div class="message">
+                {% if check %}
+                    <p style="color: green;">{{ check }}</p>
+                {% endif %}
+
+                {% if chekcerror %}
+                    <p style="color: red;">{{ chekcerror }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function rotateImage() {
+            const img = document.getElementById('scanImage');
+            const currentRotation = img.style.transform || 'rotate(0deg)';
+            const newRotation = `rotate(${(parseInt(currentRotation.replace('rotate(', '').replace('deg)', '')) + 180) % 360}deg)`;
+            img.style.transform = newRotation;
+        }
+        document.addEventListener('keydown', function(e) {
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                return;
+            }
+            if (e.key === 'ArrowLeft') {
+                document.getElementById('prevBtn').click();
+            } else if (e.key === 'ArrowRight') {
+                document.getElementById('nextBtn').click();
+            } else if (e.key === 'ArrowUp') {
+                document.getElementById('rotate').click();
+            }
+        });
+    </script>
+</body>
+</html>
